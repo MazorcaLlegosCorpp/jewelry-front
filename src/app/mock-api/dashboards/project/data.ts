@@ -5,6 +5,16 @@ import { DateTime } from 'luxon';
 const now = DateTime.now();
 
 export const project = {
+
+    invitador:{
+        'empresario-que-invito': 'Miguel Angel',
+        'lider-de-despachos': 'NATALIA ANDREA MUNERA MUNERA',
+        'empresario-hace': '5 años, 6 meses, 17 días, Fecha ingreso: 2018-11-01',
+        'ciudad': 'Pereira',
+        'telefono': 3148750223,
+        'correo': 'kevinosorio95@hotmail.com'
+    },
+
     githubIssues      : {
         overview: {
             'this-week': {
