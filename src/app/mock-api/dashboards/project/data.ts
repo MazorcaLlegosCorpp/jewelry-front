@@ -5,6 +5,62 @@ import { DateTime } from 'luxon';
 const now = DateTime.now();
 
 export const project = {
+
+    cards: {
+        mis_empresarios: 7,
+        mis_emprendedores: 36,
+        pedidos_mensuales: 203 ,
+        promedio_ventas: 1063500
+    },
+
+    perfil     : {
+        columns: ['invitador', 'lider_despachos', 'empresario_hace', 'ciudad', 'telefono', 'correo'],
+        rows   : [
+            {
+                invitador: 'MIGUEL ANGEL',
+                lider_despachos: 'NATALIA ANDREA MUNERA',
+                empresario_hace: '5 años, 6 meses, 19 dias', // contar los dias desde que ingreso al sistema
+                fecha_ingreso: '2018-11-01', //crear un campo para guardar la fecha de ingreso
+                ciudad: 'Pereira',
+                telefono: 3148750223,
+                correo: 'kevinosorio95@hotmail.com',
+            },
+        ],
+    },
+
+    newVsReturning     : {
+        uniqueVisitors: 46085,
+        series        : [80, 20],
+        labels        : [
+            'New',
+            'Returning',
+        ],
+    },
+    gender             : {
+        uniqueVisitors: 46085,
+        series        : [55, 45],
+        labels        : [
+            'Male',
+            'Female',
+        ],
+    },
+    age                : {
+        uniqueVisitors: 46085,
+        series        : [35, 65],
+        labels        : [
+            'Under 30',
+            'Over 30',
+        ],
+    },
+    language           : {
+        uniqueVisitors: 46085,
+        series        : [25, 75],
+        labels        : [
+            'English',
+            'Other',
+        ],
+    },
+
     githubIssues      : {
         overview: {
             'this-week': {
@@ -212,42 +268,6 @@ export const project = {
                 expensesPercentage : 94.08,
                 remainingAmount    : 880,
                 remainingPercentage: 5.92,
-            },
-            {
-                id                 : 2,
-                type               : 'Design',
-                total              : 21080,
-                expensesAmount     : 17240.34,
-                expensesPercentage : 81.78,
-                remainingAmount    : 3839.66,
-                remainingPercentage: 18.22,
-            },
-            {
-                id                 : 3,
-                type               : 'Development',
-                total              : 34720,
-                expensesAmount     : 3518,
-                expensesPercentage : 10.13,
-                remainingAmount    : 31202,
-                remainingPercentage: 89.87,
-            },
-            {
-                id                 : 4,
-                type               : 'Extras',
-                total              : 18600,
-                expensesAmount     : 0,
-                expensesPercentage : 0,
-                remainingAmount    : 18600,
-                remainingPercentage: 100,
-            },
-            {
-                id                 : 5,
-                type               : 'Marketing',
-                total              : 34720,
-                expensesAmount     : 19859.84,
-                expensesPercentage : 57.2,
-                remainingAmount    : 14860.16,
-                remainingPercentage: 42.8,
             },
         ],
     },

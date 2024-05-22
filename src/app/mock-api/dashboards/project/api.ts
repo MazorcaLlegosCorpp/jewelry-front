@@ -8,29 +8,19 @@ export class ProjectMockApi
 {
     private _project: any = projectData;
 
-    /**
-     * Constructor
-     */
+
     constructor(private _fuseMockApiService: FuseMockApiService)
     {
-        // Register Mock API handlers
         this.registerHandlers();
     }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @ Public methods
-    // -----------------------------------------------------------------------------------------------------
 
-    /**
-     * Register Mock API handlers
-     */
     registerHandlers(): void
     {
-        // -----------------------------------------------------------------------------------------------------
-        // @ Sales - GET
-        // -----------------------------------------------------------------------------------------------------
+
         this._fuseMockApiService
             .onGet('api/dashboards/project')
             .reply(() => [200, cloneDeep(this._project)]);
+
     }
 }
