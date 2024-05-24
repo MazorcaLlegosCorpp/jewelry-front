@@ -71,39 +71,14 @@ export const project = {
                 're-opened'    : 8,
                 'needs-triage' : 6,
             },
-            'last-week': {
-                'new-issues'   : 197,
-                'closed-issues': 72,
-                'fixed'        : 6,
-                'wont-fix'     : 11,
-                're-opened'    : 6,
-                'needs-triage' : 5,
-            },
         },
-        labels  : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        labels  : ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sept', 'Oct', 'Nov', 'Dic'],
         series  : {
-            'this-week': [
+            'ventas-mes': [
                 {
-                    name: 'New issues',
-                    type: 'line',
-                    data: [42, 28, 43, 34, 20, 25, 22],
-                },
-                {
-                    name: 'Closed issues',
+                    name: 'Ventas este mes',
                     type: 'column',
-                    data: [11, 10, 8, 11, 8, 10, 17],
-                },
-            ],
-            'last-week': [
-                {
-                    name: 'New issues',
-                    type: 'line',
-                    data: [37, 32, 39, 27, 18, 24, 20],
-                },
-                {
-                    name: 'Closed issues',
-                    type: 'column',
-                    data: [9, 8, 10, 12, 7, 11, 15],
+                    data: [1109461, 1637453, 2289049, 1763182, 2035679, 987654, 2130578, 1389204, 1825347, 1234567, 2498603, 1947689],
                 },
             ],
         },
@@ -113,10 +88,6 @@ export const project = {
             'this-week': {
                 'new'      : 594,
                 'completed': 287,
-            },
-            'last-week': {
-                'new'      : 526,
-                'completed': 260,
             },
         },
         labels  : ['API', 'Backend', 'Frontend', 'Issues'],
@@ -196,11 +167,11 @@ export const project = {
         ],
     },
     budgetDistribution: {
-        categories: ['Concept', 'Design', 'Development', 'Extras', 'Marketing'],
+        categories: ['Anillos', 'Aretes', 'Cadenas', 'Cruceros', 'Dijes', 'Exclusividades', 'Herrajes', 'Otros', 'Pusleras', 'Rosarios'],
         series    : [
             {
                 name: 'Budget',
-                data: [12, 20, 28, 15, 25],
+                data: [12, 8, 20, 15, 5, 10, 6, 9, 7, 8],
             },
         ],
     },
