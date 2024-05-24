@@ -6,6 +6,154 @@ const now = DateTime.now();
 
 export const project = {
 
+    misEmpresarios: {
+    columns: ['nombre', 'fechaIngreso', 'telefono'],
+    rows:[
+            {
+                nombre: 'Andrea Mendoza',
+                fechaIngreso: '2022-04-22',
+                telefono: '3123456780'
+            },
+            {
+                nombre: 'Luis Torres',
+                fechaIngreso: '2021-08-14',
+                telefono: '3145678902'
+            },
+            {
+                nombre: 'Natalia Jiménez',
+                fechaIngreso: '2023-01-09',
+                telefono: '3167890123'
+            },
+            {
+                nombre: 'Santiago Romero',
+                fechaIngreso: '2020-06-30',
+                telefono: '3189012345'
+            },
+            {
+                nombre: 'Gabriela Castro',
+                fechaIngreso: '2022-11-11',
+                telefono: '3201234567'
+            },
+            {
+                nombre: 'Ricardo Morales',
+                fechaIngreso: '2021-05-19',
+                telefono: '3223456789'
+            },
+            {
+                nombre: 'Valentina Herrera',
+                fechaIngreso: '2023-03-27',
+                telefono: '3245678901'
+            },
+            {
+                nombre: 'Fernando Vargas',
+                fechaIngreso: '2022-09-05',
+                telefono: '3267890123'
+            },
+            {
+                nombre: 'Lucía Ramírez',
+                fechaIngreso: '2021-12-21',
+                telefono: '3289012345'
+            },
+            {
+                nombre: 'Jorge Ríos',
+                fechaIngreso: '2020-04-15',
+                telefono: '3301234567'
+            }
+        ]
+    },
+
+
+    misEmprendedores: {
+        columns: ['nombre', 'fechaIngreso', 'telefono'],
+        rows:[
+            {
+                nombre: 'Miguel Gallego',
+                fechaIngreso: '	2021-07-17',
+                telefono: '3106454071'
+            },
+            {
+                nombre: 'Ana Martínez',
+                fechaIngreso: '2022-03-05',
+                telefono: '3157892345'
+            },
+            {
+                nombre: 'Carlos López',
+                fechaIngreso: '2020-11-12',
+                telefono: '3204567890'
+            },
+            {
+                nombre: 'María Rodríguez',
+                fechaIngreso: '2023-02-20',
+                telefono: '3009876543'
+            },
+            {
+                nombre: 'Juan Pérez',
+                fechaIngreso: '2022-09-10',
+                telefono: '3181234567'
+            },
+        ]
+    },
+    ventas: {
+        series: {
+            'this-year': [
+                {
+                    name: 'Total',
+                    data: [
+                        {
+                            x: now.minus({months: 12}).plus({day: 1}).toJSDate(),
+                            y: 0,
+                        },
+                        {
+                            x: now.minus({months: 11}).plus({day: 1}).toJSDate(),
+                            y: 0,
+                        },
+                        {
+                            x: now.minus({months: 10}).plus({day: 1}).toJSDate(),
+                            y: 0,
+                        },
+                        {
+                            x: now.minus({months: 9}).plus({day: 1}).toJSDate(),
+                            y: 0,
+                        },
+                        {
+                            x: now.minus({months: 8}).plus({day: 1}).toJSDate(),
+                            y: 0,
+                        },
+                        {
+                            x: now.minus({months: 7}).plus({day: 1}).toJSDate(),
+                            y: 43957,
+                        },
+                        {
+                            x: now.minus({months: 6}).plus({day: 1}).toJSDate(),
+                            y: 2315000,
+                        },
+                        {
+                            x: now.minus({months: 5}).plus({day: 1}).toJSDate(),
+                            y: 21421000,
+                        },
+                        {
+                            x: now.minus({months: 4}).plus({day: 1}).toJSDate(),
+                            y: 1950000,
+                        },
+                        {
+                            x: now.minus({months: 3}).plus({day: 1}).toJSDate(),
+                            y: 2060000,
+                        },
+                        {
+                            x: now.minus({months: 2}).plus({day: 1}).toJSDate(),
+                            y: 6440000,
+                        },
+                        {
+                            x: now.minus({months: 1}).plus({day: 1}).toJSDate(),
+                            y: 740000,
+                        },
+                    ],
+                },
+            ],
+
+        },
+    },
+
     cards: {
         mis_empresarios: 7,
         mis_emprendedores: 36,

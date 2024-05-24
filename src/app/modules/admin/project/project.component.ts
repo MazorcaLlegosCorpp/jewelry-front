@@ -24,6 +24,7 @@ import { Subject, takeUntil } from 'rxjs';
 })
 export class ProjectComponent implements OnInit, OnDestroy
 {
+    chartVisitors: ApexOptions = {}
     chartGithubIssues: ApexOptions = {};
     chartTaskDistribution: ApexOptions = {};
     chartBudgetDistribution: ApexOptions = {};
@@ -145,6 +146,104 @@ export class ProjectComponent implements OnInit, OnDestroy
      */
     private _prepareChartData(): void
     {
+        // Visitors
+        this.chartVisitors = {
+            chart     : {
+                animations: {
+                    speed           : 400,
+                    animateGradually: {
+                        enabled: false,
+                    },
+                },
+                fontFamily: 'inherit',
+                foreColor : 'inherit',
+                width     : '100%',
+                height    : '100%',
+                type      : 'area',
+                toolbar   : {
+                    show: false,
+                },
+                zoom      : {
+                    enabled: false,
+                },
+            },
+            colors    : ['#818CF8'],
+            dataLabels: {
+                enabled: false,
+            },
+            fill      : {
+                colors: ['#312E81'],
+            },
+            grid      : {
+                show       : true,
+                borderColor: '#334155',
+                padding    : {
+                    top   : 10,
+                    bottom: -40,
+                    left  : 0,
+                    right : 0,
+                },
+                position   : 'back',
+                xaxis      : {
+                    lines: {
+                        show: false,
+                    },
+                },
+            },
+            series    : this.data.ventas.series,
+            stroke    : {
+                width: 2,
+            },
+            tooltip   : {
+                followCursor: true,
+                theme       : 'dark',
+                x           : {
+                    format: 'MMM dd, yyyy',
+                },
+                y           : {
+                    formatter: (value: number): string => `${value}`,
+                },
+            },
+            xaxis     : {
+                axisBorder: {
+                    show: false,
+                },
+                axisTicks : {
+                    show: false,
+                },
+                crosshairs: {
+                    stroke: {
+                        color    : '#475569',
+                        dashArray: 0,
+                        width    : 2,
+                    },
+                },
+                labels    : {
+                    offsetY: -20,
+                    style  : {
+                        colors: '#CBD5E1',
+                    },
+                },
+                tickAmount: 20,
+                tooltip   : {
+                    enabled: false,
+                },
+                type      : 'datetime',
+            },
+            yaxis     : {
+                axisTicks : {
+                    show: false,
+                },
+                axisBorder: {
+                    show: false,
+                },
+                min       : (min): number => min - 750,
+                max       : (max): number => max + 250,
+                tickAmount: 5,
+                show      : false,
+            },
+        };
+
         // Github issues
         this.chartGithubIssues = {
             chart      : {

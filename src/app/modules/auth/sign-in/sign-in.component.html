@@ -11,7 +11,7 @@
             <div class="mt-8 text-4xl font-extrabold tracking-tight leading-tight">Inicia Sesion</div>
             <div class="flex items-baseline mt-0.5 font-medium">
                 <div>¿No tienes una cuenta?</div>
-                <a class="ml-1 text-primary-500 hover:underline" [routerLink]="['/sign-up']">¡Crea una!
+                <a class="ml-1 text-yellow-500 hover:underline" [routerLink]="['/sign-up']">¡Crea una!
                 </a>
             </div>
 
@@ -29,10 +29,10 @@
                     <mat-label>Correo</mat-label>
                     <input id="email" matInput [formControlName]="'email'">
                     <mat-error *ngIf="signInForm.get('email').hasError('required')">
-                        Email address is required
+                        El email es obligatorios
                     </mat-error>
                     <mat-error *ngIf="signInForm.get('email').hasError('email')">
-                        Please enter a valid email address
+                        Ingresa una contraseña valida
                     </mat-error>
                 </mat-form-field>
 
@@ -49,7 +49,7 @@
                             [svgIcon]="'heroicons_solid:eye-slash'"></mat-icon>
                     </button>
                     <mat-error>
-                        Password is required
+                        Ingresa una contraseña
                     </mat-error>
                 </mat-form-field>
 
@@ -58,13 +58,13 @@
                     <mat-checkbox class="-ml-2" [color]="'primary'" [formControlName]="'rememberMe'">
                         Recuerdame
                     </mat-checkbox>
-                    <a class="text-md font-medium text-primary-500 hover:underline"
+                    <a class="text-md font-medium text-yellow-500 hover:underline"
                         [routerLink]="['/forgot-password']">¿Olvidaste la contraseña?
                     </a>
                 </div>
 
                 <!-- Submit button -->
-                <button class="fuse-mat-button-large w-full mt-6" mat-flat-button [color]="'primary'"
+                <button class="fuse-mat-button-large w-full mt-6 bg-yellow-500" mat-flat-button
                     [disabled]="signInForm.disabled" (click)="signIn()">
                     <span *ngIf="!signInForm.disabled">
                         Entrar
@@ -101,7 +101,7 @@
         <!-- Content -->
         <div class="z-10 relative w-full max-w-2xl">
             <div class="text-7xl font-bold leading-none text-gray-100">
-                <div>add a title</div>
+                <div>Kevin's Jewelry</div>
             </div>
             <div class="mt-6 text-lg tracking-tight leading-6 text-gray-400">
                 add a desciption
