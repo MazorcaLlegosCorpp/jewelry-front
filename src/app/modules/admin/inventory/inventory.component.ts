@@ -15,7 +15,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { InventoryService } from 'app/modules/admin/inventory/inventory.service';
-import { InventoryBrand, InventoryCategory, InventoryPagination, InventoryProduct, InventoryTag, InventoryVendor } from 'app/modules/admin/inventory/inventory.types';
+import { InventoryPagination, InventoryProduct } from 'app/modules/admin/inventory/inventory.types';
 import { debounceTime, map, merge, Observable, Subject, switchMap, takeUntil } from 'rxjs';
 
 @Component({
@@ -54,18 +54,13 @@ export class InventoryComponent implements OnInit, AfterViewInit, OnDestroy
 
     products$: Observable<InventoryProduct[]>;
 
-    brands: InventoryBrand[];
-    categories: InventoryCategory[];
-    filteredTags: InventoryTag[];
     flashMessage: 'success' | 'error' | null = null;
     isLoading: boolean = false;
     pagination: InventoryPagination;
     searchInputControl: UntypedFormControl = new UntypedFormControl();
     selectedProduct: InventoryProduct | null = null;
     selectedProductForm: UntypedFormGroup;
-    tags: InventoryTag[];
     tagsEditMode: boolean = false;
-    vendors: InventoryVendor[];
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     /**
@@ -94,48 +89,14 @@ export class InventoryComponent implements OnInit, AfterViewInit, OnDestroy
             id               : [''],
             category         : [''],
             name             : ['', [Validators.required]],
-            description      : [''],
-            tags             : [[]],
-            sku              : [''],
-            barcode          : [''],
-            brand            : [''],
-            vendor           : [''],
-            stock            : [''],
-            reserved         : [''],
-            cost             : [''],
-            basePrice        : [''],
-            taxPercent       : [''],
-            price            : [''],
-            weight           : [''],
+            ref              : [''],
+            stock            : [[]],
+            precioDetal      : [''],
+            precioEmprendedor: [''],
             thumbnail        : [''],
             images           : [[]],
             currentImageIndex: [0], // Image index that is currently being viewed
-            active           : [false],
         });
-
-        // Get the brands
-        this._inventoryService.brands$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((brands: InventoryBrand[]) =>
-            {
-                // Update the brands
-                this.brands = brands;
-
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
-
-        // Get the categories
-        this._inventoryService.categories$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((categories: InventoryCategory[]) =>
-            {
-                // Update the categories
-                this.categories = categories;
-
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
 
         // Get the pagination
         this._inventoryService.pagination$
@@ -151,31 +112,6 @@ export class InventoryComponent implements OnInit, AfterViewInit, OnDestroy
 
         // Get the products
         this.products$ = this._inventoryService.products$;
-
-        // Get the tags
-        this._inventoryService.tags$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((tags: InventoryTag[]) =>
-            {
-                // Update the tags
-                this.tags = tags;
-                this.filteredTags = tags;
-
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
-
-        // Get the vendors
-        this._inventoryService.vendors$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((vendors: InventoryVendor[]) =>
-            {
-                // Update the vendors
-                this.vendors = vendors;
-
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
 
         // Subscribe to search input field value changes
         this.searchInputControl.valueChanges
@@ -324,52 +260,6 @@ export class InventoryComponent implements OnInit, AfterViewInit, OnDestroy
     toggleTagsEditMode(): void
     {
         this.tagsEditMode = !this.tagsEditMode;
-    }
-
-    /**
-     * Filter tags
-     *
-     * @param event
-     */
-    filterTags(event): void
-    {
-        // Get the value
-        const value = event.target.value.toLowerCase();
-
-        // Filter the tags
-        this.filteredTags = this.tags.filter(tag => tag.title.toLowerCase().includes(value));
-    }
-
-
-    /**
-     * Update the tag title
-     *
-     * @param tag
-     * @param event
-     */
-    updateTagTitle(tag: InventoryTag, event): void
-    {
-        // Update the title on the tag
-        tag.title = event.target.value;
-
-        // Update the tag on the server
-        this._inventoryService.updateTag(tag.id, tag)
-            .pipe(debounceTime(300))
-            .subscribe();
-
-        // Mark for check
-        this._changeDetectorRef.markForCheck();
-    }
-
-
-    /**
-     * Should the create tag button be visible
-     *
-     * @param inputValue
-     */
-    shouldShowCreateTagButton(inputValue: string): boolean
-    {
-        return !!!(inputValue === '' || this.tags.findIndex(tag => tag.title.toLowerCase() === inputValue.toLowerCase()) > -1);
     }
 
     /**

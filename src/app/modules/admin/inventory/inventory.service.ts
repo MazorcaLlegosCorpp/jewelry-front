@@ -1,19 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { InventoryBrand, InventoryCategory, InventoryPagination, InventoryProduct, InventoryTag, InventoryVendor } from 'app/modules/admin/inventory/inventory.types';
+import { InventoryPagination, InventoryProduct } from 'app/modules/admin/inventory/inventory.types';
 import { BehaviorSubject, filter, map, Observable, of, switchMap, take, tap, throwError } from 'rxjs';
 
 @Injectable({providedIn: 'root'})
 export class InventoryService
 {
     // Private
-    private _brands: BehaviorSubject<InventoryBrand[] | null> = new BehaviorSubject(null);
-    private _categories: BehaviorSubject<InventoryCategory[] | null> = new BehaviorSubject(null);
     private _pagination: BehaviorSubject<InventoryPagination | null> = new BehaviorSubject(null);
     private _product: BehaviorSubject<InventoryProduct | null> = new BehaviorSubject(null);
     private _products: BehaviorSubject<InventoryProduct[] | null> = new BehaviorSubject(null);
-    private _tags: BehaviorSubject<InventoryTag[] | null> = new BehaviorSubject(null);
-    private _vendors: BehaviorSubject<InventoryVendor[] | null> = new BehaviorSubject(null);
 
     /**
      * Constructor
@@ -26,21 +22,7 @@ export class InventoryService
     // @ Accessors
     // -----------------------------------------------------------------------------------------------------
 
-    /**
-     * Getter for brands
-     */
-    get brands$(): Observable<InventoryBrand[]>
-    {
-        return this._brands.asObservable();
-    }
 
-    /**
-     * Getter for categories
-     */
-    get categories$(): Observable<InventoryCategory[]>
-    {
-        return this._categories.asObservable();
-    }
 
     /**
      * Getter for pagination
@@ -66,51 +48,9 @@ export class InventoryService
         return this._products.asObservable();
     }
 
-    /**
-     * Getter for tags
-     */
-    get tags$(): Observable<InventoryTag[]>
-    {
-        return this._tags.asObservable();
-    }
-
-    /**
-     * Getter for vendors
-     */
-    get vendors$(): Observable<InventoryVendor[]>
-    {
-        return this._vendors.asObservable();
-    }
-
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
-
-    /**
-     * Get brands
-     */
-    getBrands(): Observable<InventoryBrand[]>
-    {
-        return this._httpClient.get<InventoryBrand[]>('api/apps/ecommerce/inventory/brands').pipe(
-            tap((brands) =>
-            {
-                this._brands.next(brands);
-            }),
-        );
-    }
-
-    /**
-     * Get categories
-     */
-    getCategories(): Observable<InventoryCategory[]>
-    {
-        return this._httpClient.get<InventoryCategory[]>('api/apps/ecommerce/inventory/categories').pipe(
-            tap((categories) =>
-            {
-                this._categories.next(categories);
-            }),
-        );
-    }
 
     /**
      * Get products
@@ -261,88 +201,6 @@ export class InventoryService
                     return isDeleted;
                 }),
             )),
-        );
-    }
-
-    /**
-     * Get tags
-     */
-    getTags(): Observable<InventoryTag[]>
-    {
-        return this._httpClient.get<InventoryTag[]>('api/apps/ecommerce/inventory/tags').pipe(
-            tap((tags) =>
-            {
-                this._tags.next(tags);
-            }),
-        );
-    }
-
-    /**
-     * Create tag
-     *
-     * @param tag
-     */
-    createTag(tag: InventoryTag): Observable<InventoryTag>
-    {
-        return this.tags$.pipe(
-            take(1),
-            switchMap(tags => this._httpClient.post<InventoryTag>('api/apps/ecommerce/inventory/tag', {tag}).pipe(
-                map((newTag) =>
-                {
-                    // Update the tags with the new tag
-                    this._tags.next([...tags, newTag]);
-
-                    // Return new tag from observable
-                    return newTag;
-                }),
-            )),
-        );
-    }
-
-    /**
-     * Update the tag
-     *
-     * @param id
-     * @param tag
-     */
-    updateTag(id: string, tag: InventoryTag): Observable<InventoryTag>
-    {
-        return this.tags$.pipe(
-            take(1),
-            switchMap(tags => this._httpClient.patch<InventoryTag>('api/apps/ecommerce/inventory/tag', {
-                id,
-                tag,
-            }).pipe(
-                map((updatedTag) =>
-                {
-                    // Find the index of the updated tag
-                    const index = tags.findIndex(item => item.id === id);
-
-                    // Update the tag
-                    tags[index] = updatedTag;
-
-                    // Update the tags
-                    this._tags.next(tags);
-
-                    // Return the updated tag
-                    return updatedTag;
-                }),
-            )),
-        );
-    }
-
-
-
-    /**
-     * Get vendors
-     */
-    getVendors(): Observable<InventoryVendor[]>
-    {
-        return this._httpClient.get<InventoryVendor[]>('api/apps/ecommerce/inventory/vendors').pipe(
-            tap((vendors) =>
-            {
-                this._vendors.next(vendors);
-            }),
         );
     }
 }
