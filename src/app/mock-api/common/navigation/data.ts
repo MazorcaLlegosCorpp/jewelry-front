@@ -14,6 +14,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
                 title: 'Anillos',
                 icon : 'heroicons_outline:chevron-right',
                 type : 'basic',
+                link    : '/inventory',
                 badge: {
                     title  : 'New!',
                     classes: 'text-teal-500',
