@@ -2,7 +2,7 @@ import { AsyncPipe, CurrencyPipe, NgClass, NgFor, NgIf, NgTemplateOutlet } from 
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule, MatRippleModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -17,6 +17,7 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { InventoryService } from 'app/modules/admin/inventory/inventory.service';
 import { InventoryPagination, InventoryProduct } from 'app/modules/admin/inventory/inventory.types';
 import { debounceTime, map, merge, Observable, Subject, switchMap, takeUntil } from 'rxjs';
+
 
 @Component({
     selector       : 'inventory',
@@ -62,6 +63,7 @@ export class InventoryComponent implements OnInit, AfterViewInit, OnDestroy
     selectedProductForm: UntypedFormGroup;
     tagsEditMode: boolean = false;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
+    selectedCategory: string = '';
 
     /**
      * Constructor

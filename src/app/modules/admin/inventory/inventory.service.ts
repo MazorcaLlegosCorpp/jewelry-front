@@ -48,6 +48,8 @@ export class InventoryService
         return this._products.asObservable();
     }
 
+
+
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
@@ -62,7 +64,7 @@ export class InventoryService
      * @param order
      * @param search
      */
-    getProducts(page: number = 0, size: number = 10, sort: string = 'name', order: 'asc' | 'desc' | '' = 'asc', search: string = ''):
+    getProducts(page: number = 0, size: number = 10, sort: string = 'name', order: 'asc' | 'desc' | '' = 'asc', search: string = '', category: string = ''):
         Observable<{ pagination: InventoryPagination; products: InventoryProduct[] }>
     {
         return this._httpClient.get<{ pagination: InventoryPagination; products: InventoryProduct[] }>('api/apps/ecommerce/inventory/products', {
@@ -111,6 +113,23 @@ export class InventoryService
             }),
         );
     }
+
+    /**
+     * Get product by category
+     */
+    getProductsByCategory(category: string): Observable<InventoryProduct[]> {
+    return this._products.pipe(
+      take(1),
+      map((products) => products.filter(item => item.category === category)),
+      switchMap((filteredProducts) => {
+        if (filteredProducts.length === 0) {
+          return throwError('Could not find products in category ' + category + '!');
+        }
+        return of(filteredProducts);
+      })
+    );
+  }
+
 
     /**
      * Create product

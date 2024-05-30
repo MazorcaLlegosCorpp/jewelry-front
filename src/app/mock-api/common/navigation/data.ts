@@ -144,12 +144,12 @@ export const compactNavigation: FuseNavigationItem[] = [
         link    : '/profile'
     },
     {
-        id      : 'navigation-features',
+        id      : 'inventory',
         title   : 'Catalogo',
-        tooltip : 'Catalogo de productos',
-        type    : 'aside',
-        icon    : 'heroicons_outline:bars-3',
-        children: [], // This will be filled from defaultNavigation so we don't have to manage multiple sets of the same navigation
+        tooltip : 'Busca productos',
+        type    : 'basic',
+        icon    : 'heroicons_outline:user-circle',
+        link    : '/inventory'
     },
     {
         id      : 'pedidos-features',
