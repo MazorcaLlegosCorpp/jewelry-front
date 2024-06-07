@@ -10,19 +10,19 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { Router } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
-import { ProjectService } from 'app/modules/admin/project/project.service';
+import { ProjectService } from 'app/modules/admin/profile/profile.service';
 import { ApexOptions, NgApexchartsModule } from 'ng-apexcharts';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
     selector       : 'project',
-    templateUrl    : './project.component.html',
+    templateUrl    : './profile.component.html',
     encapsulation  : ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone     : true,
     imports        : [TranslocoModule, MatIconModule, MatButtonModule, MatRippleModule, MatMenuModule, MatTabsModule, MatButtonToggleModule, NgApexchartsModule, NgFor, NgIf, MatTableModule, NgClass, CurrencyPipe],
 })
-export class ProjectComponent implements OnInit, OnDestroy
+export class ProfileComponent implements OnInit, OnDestroy
 {
     chartVisitors: ApexOptions = {}
     chartGithubIssues: ApexOptions = {};

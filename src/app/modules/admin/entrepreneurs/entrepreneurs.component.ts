@@ -14,14 +14,15 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
-import { InventoryService } from 'app/modules/admin/inventory/inventory.service';
-import { InventoryPagination, InventoryProduct } from 'app/modules/admin/inventory/inventory.types';
+import { EntrepreneurService } from './entrepreneurs.service';
+import { InventoryPagination, InventoryProduct, Entrepreneur } from 'app/modules/admin/entrepreneurs/entrepreneurs.types';
 import { debounceTime, map, merge, Observable, Subject, switchMap, takeUntil } from 'rxjs';
+import { Router } from '@angular/router';
 
 
 @Component({
-    selector       : 'inventory',
-    templateUrl    : './inventory.component.html',
+    selector       : 'entrepreneurs',
+    templateUrl    : './entrepreneurs.component.html',
     styles         : [
         /* language=SCSS */
         `
@@ -48,12 +49,12 @@ import { debounceTime, map, merge, Observable, Subject, switchMap, takeUntil } f
     standalone     : true,
     imports        : [NgIf, MatProgressBarModule, MatFormFieldModule, MatIconModule, MatInputModule, FormsModule, ReactiveFormsModule, MatButtonModule, MatSortModule, NgFor, NgTemplateOutlet, MatPaginatorModule, NgClass, MatSlideToggleModule, MatSelectModule, MatOptionModule, MatCheckboxModule, MatRippleModule, AsyncPipe, CurrencyPipe],
 })
-export class InventoryComponent implements OnInit, AfterViewInit, OnDestroy
+export class EntrepreneursComponent implements OnInit, AfterViewInit, OnDestroy
 {
     @ViewChild(MatPaginator) private _paginator: MatPaginator;
     @ViewChild(MatSort) private _sort: MatSort;
 
-    products$: Observable<InventoryProduct[]>;
+    entrepreneurs$: Observable<Entrepreneur[]>;
 
     flashMessage: 'success' | 'error' | null = null;
     isLoading: boolean = false;
@@ -65,16 +66,100 @@ export class InventoryComponent implements OnInit, AfterViewInit, OnDestroy
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     selectedCategory: string = '';
 
+    animationStates: any;
+    visibilityStates: any;
+
     /**
      * Constructor
      */
     constructor(
         private _changeDetectorRef: ChangeDetectorRef,
         private _fuseConfirmationService: FuseConfirmationService,
-        private _formBuilder: UntypedFormBuilder,
-        private _inventoryService: InventoryService,
+        private _entrepreneurService: EntrepreneurService,
     )
     {
+        // Set the defaults
+        this.animationStates = {
+            expandCollapse: 'expanded',
+            fadeIn        : {
+                direction: 'in',
+                in       : '*',
+                top      : '*',
+                bottom   : '*',
+                left     : '*',
+                right    : '*',
+            },
+            fadeOut       : {
+                direction: 'out',
+                out      : '*',
+                top      : '*',
+                bottom   : '*',
+                left     : '*',
+                right    : '*',
+            },
+            shake         : {
+                shake: true,
+            },
+            slideIn       : {
+                direction: 'top',
+                top      : '*',
+                bottom   : '*',
+                left     : '*',
+                right    : '*',
+            },
+            slideOut      : {
+                direction: 'top',
+                top      : '*',
+                bottom   : '*',
+                left     : '*',
+                right    : '*',
+            },
+            zoomIn        : {
+                in: '*',
+            },
+            zoomOut       : {
+                out: '*',
+            },
+        };
+
+        this.visibilityStates = {
+            expandCollapse: true,
+            fadeIn        : {
+                in    : true,
+                top   : true,
+                bottom: true,
+                left  : true,
+                right : true,
+            },
+            fadeOut       : {
+                out   : true,
+                top   : true,
+                bottom: true,
+                left  : true,
+                right : true,
+            },
+            shake         : {
+                shake: true,
+            },
+            slideIn       : {
+                top   : true,
+                bottom: true,
+                left  : true,
+                right : true,
+            },
+            slideOut      : {
+                top   : true,
+                bottom: true,
+                left  : true,
+                right : true,
+            },
+            zoomIn        : {
+                in: true,
+            },
+            zoomOut       : {
+                out: true,
+            },
+        };
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -86,22 +171,9 @@ export class InventoryComponent implements OnInit, AfterViewInit, OnDestroy
      */
     ngOnInit(): void
     {
-        // Create the selected product form
-        this.selectedProductForm = this._formBuilder.group({
-            id               : [''],
-            category         : [''],
-            name             : ['', [Validators.required]],
-            ref              : [''],
-            stock            : [[]],
-            precioDetal      : [''],
-            precioEmprendedor: [''],
-            thumbnail        : [''],
-            images           : [[]],
-            currentImageIndex: [0], // Image index that is currently being viewed
-        });
 
         // Get the pagination
-        this._inventoryService.pagination$
+        this._entrepreneurService.pagination$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((pagination: InventoryPagination) =>
             {
@@ -112,9 +184,8 @@ export class InventoryComponent implements OnInit, AfterViewInit, OnDestroy
                 this._changeDetectorRef.markForCheck();
             });
 
-        // Get the products
-        this.products$ = this._inventoryService.products$;
-        console.log(this.products$)
+        // Get the entrepreneurs
+        this.entrepreneurs$ = this._entrepreneurService.entrepreneurs$;
 
         // Subscribe to search input field value changes
         this.searchInputControl.valueChanges
@@ -125,7 +196,7 @@ export class InventoryComponent implements OnInit, AfterViewInit, OnDestroy
                 {
                     this.closeDetails();
                     this.isLoading = true;
-                    return this._inventoryService.getProducts(0, 10, 'name', 'asc', query);
+                    return this._entrepreneurService.getEntrepreneurs(0, 10, 'name', 'asc', query);
                 }),
                 map(() =>
                 {
@@ -170,7 +241,7 @@ export class InventoryComponent implements OnInit, AfterViewInit, OnDestroy
                 {
                     this.closeDetails();
                     this.isLoading = true;
-                    return this._inventoryService.getProducts(this._paginator.pageIndex, this._paginator.pageSize, this._sort.active, this._sort.direction);
+                    return this._entrepreneurService.getEntrepreneurs(this._paginator.pageIndex, this._paginator.pageSize, this._sort.active, this._sort.direction);
                 }),
                 map(() =>
                 {
@@ -189,6 +260,8 @@ export class InventoryComponent implements OnInit, AfterViewInit, OnDestroy
         this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
     }
+
+
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
@@ -210,7 +283,7 @@ export class InventoryComponent implements OnInit, AfterViewInit, OnDestroy
         }
 
         // Get the product by id
-        this._inventoryService.getProductById(productId)
+        this._entrepreneurService.getProductById(productId)
             .subscribe((product) =>
             {
                 // Set the selected product
@@ -268,10 +341,10 @@ export class InventoryComponent implements OnInit, AfterViewInit, OnDestroy
     /**
      * Create product
      */
-    createProduct(): void
+    createEmprendedor(): void
     {
         // Create the product
-        this._inventoryService.createProduct().subscribe((newProduct) =>
+        this._entrepreneurService.createProduct().subscribe((newProduct) =>
         {
             // Go to new product
             this.selectedProduct = newProduct;
@@ -296,7 +369,7 @@ export class InventoryComponent implements OnInit, AfterViewInit, OnDestroy
         delete product.currentImageIndex;
 
         // Update the product on the server
-        this._inventoryService.updateProduct(product.id, product).subscribe(() =>
+        this._entrepreneurService.updateProduct(product.id, product).subscribe(() =>
         {
             // Show a success message
             this.showFlashMessage('success');
@@ -329,7 +402,7 @@ export class InventoryComponent implements OnInit, AfterViewInit, OnDestroy
                 const product = this.selectedProductForm.getRawValue();
 
                 // Delete the product on the server
-                this._inventoryService.deleteProduct(product.id).subscribe(() =>
+                this._entrepreneurService.deleteProduct(product.id).subscribe(() =>
                 {
                     // Close the details
                     this.closeDetails();

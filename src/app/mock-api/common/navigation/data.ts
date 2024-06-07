@@ -148,8 +148,16 @@ export const compactNavigation: FuseNavigationItem[] = [
         title   : 'Catalogo',
         tooltip : 'Busca productos',
         type    : 'basic',
-        icon    : 'heroicons_outline:user-circle',
+        icon    : 'heroicons_outline:book-open',
         link    : '/inventory'
+    },
+    {
+        id      : 'entrepreneur',
+        title   : 'Emprendedores',
+        tooltip : 'Visualiza tus emprendedores!',
+        type    : 'basic',
+        icon    : 'heroicons_outline:users',
+        link    : '/entrepeneurs'
     },
     {
         id      : 'pedidos-features',

@@ -1,15 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { InventoryPagination, InventoryProduct } from 'app/modules/admin/inventory/inventory.types';
+import { InventoryPagination, InventoryProduct, Entrepreneur } from 'app/modules/admin/entrepreneurs/entrepreneurs.types';
 import { BehaviorSubject, filter, map, Observable, of, switchMap, take, tap, throwError } from 'rxjs';
 
 @Injectable({providedIn: 'root'})
-export class InventoryService
+export class EntrepreneurService
 {
     // Private
     private _pagination: BehaviorSubject<InventoryPagination | null> = new BehaviorSubject(null);
     private _product: BehaviorSubject<InventoryProduct | null> = new BehaviorSubject(null);
     private _products: BehaviorSubject<InventoryProduct[] | null> = new BehaviorSubject(null);
+    private _entrepreneurs: BehaviorSubject<Entrepreneur[] | null> = new BehaviorSubject(null);
 
     /**
      * Constructor
@@ -48,13 +49,21 @@ export class InventoryService
         return this._products.asObservable();
     }
 
+    /**
+     * Getter for entrepreneurs
+     */
+    get entrepreneurs$(): Observable<Entrepreneur[]>
+    {
+        return this._entrepreneurs.asObservable();
+    }
+
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
 
     /**
-     * Get products
+     * Get entrepreneurs
      *
      *
      * @param page
@@ -63,10 +72,10 @@ export class InventoryService
      * @param order
      * @param search
      */
-    getProducts(page: number = 0, size: number = 10, sort: string = 'name', order: 'asc' | 'desc' | '' = 'asc', search: string = '', category: string = ''):
-        Observable<{ pagination: InventoryPagination; products: InventoryProduct[] }>
+    getEntrepreneurs(page: number = 0, size: number = 10, sort: string = 'name', order: 'asc' | 'desc' | '' = 'asc', search: string = ''):
+        Observable<{ pagination: InventoryPagination; entrepreneurs: Entrepreneur[] }>
     {
-        return this._httpClient.get<{ pagination: InventoryPagination; products: InventoryProduct[] }>('api/apps/ecommerce/inventory/products', {
+        return this._httpClient.get<{ pagination: InventoryPagination; entrepreneurs: Entrepreneur[] }>('api/apps/ecommerce/inventory/entrepreneurs', {
             params: {
                 page: '' + page,
                 size: '' + size,
@@ -78,7 +87,7 @@ export class InventoryService
             tap((response) =>
             {
                 this._pagination.next(response.pagination);
-                this._products.next(response.products);
+                this._entrepreneurs.next(response.entrepreneurs);
             }),
         );
     }
