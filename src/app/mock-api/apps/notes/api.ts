@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import { FuseMockApiUtils } from '@fuse/lib/mock-api';
 import { FuseMockApiService } from '@fuse/lib/mock-api/mock-api.service';
-import { labels as labelsData, notes as notesData } from 'app/mock-api/apps/notes/data';
+import { categories as categoriesData, notes as notesData, products as productsData } from 'app/mock-api/apps/notes/data';
 import { cloneDeep } from 'lodash-es';
 
 @Injectable({providedIn: 'root'})
 export class NotesMockApi
 {
-    private _labels: any[] = labelsData;
+    private _labels: any[] = categoriesData;
     private _notes: any[] = notesData;
+    private _products: any[] = productsData;
 
     /**
      * Constructor
@@ -28,6 +29,33 @@ export class NotesMockApi
      */
     registerHandlers(): void
     {
+
+        // -----------------------------------------------------------------------------------------------------
+        // @ Products - GET
+        // -----------------------------------------------------------------------------------------------------
+        this._fuseMockApiService
+            .onGet('api/apps/products/all')
+            .reply(() =>
+            {
+                // Clone the labels and products
+                const labels = cloneDeep(this._labels);
+                let products = cloneDeep(this._products);
+
+                // Attach the labels to the notes
+                products = products.map(product => (
+                    {
+                        ...product,
+                        labels: product.labels.map(labelId => labels.find(label => label.id === labelId)),
+                    }
+                ));
+
+                return [
+                    200,
+                    cloneDeep(products),
+                ];
+            });
+
+
         // -----------------------------------------------------------------------------------------------------
         // @ Labels - GET
         // -----------------------------------------------------------------------------------------------------
@@ -37,6 +65,7 @@ export class NotesMockApi
                 200,
                 cloneDeep(this._labels),
             ]);
+
 
         // -----------------------------------------------------------------------------------------------------
         // @ Labels - POST
@@ -184,6 +213,7 @@ export class NotesMockApi
                     notes,
                 ];
             });
+
 
         // -----------------------------------------------------------------------------------------------------
         // @ Notes - POST

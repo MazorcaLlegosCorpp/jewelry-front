@@ -1,15 +1,16 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { InventoryPagination, InventoryProduct } from 'app/modules/admin/inventory/inventory.types';
-import { BehaviorSubject, filter, map, Observable, of, switchMap, take, tap, throwError } from 'rxjs';
+import { Label, Note } from 'app/modules/admin/inventory/inventory.types';
+import { cloneDeep } from 'lodash-es';
+import { BehaviorSubject, map, Observable, of, switchMap, take, tap, throwError } from 'rxjs';
 
 @Injectable({providedIn: 'root'})
-export class InventoryService
+export class NotesService
 {
     // Private
-    private _pagination: BehaviorSubject<InventoryPagination | null> = new BehaviorSubject(null);
-    private _product: BehaviorSubject<InventoryProduct | null> = new BehaviorSubject(null);
-    private _products: BehaviorSubject<InventoryProduct[] | null> = new BehaviorSubject(null);
+    private _labels: BehaviorSubject<Label[] | null> = new BehaviorSubject(null);
+    private _note: BehaviorSubject<Note | null> = new BehaviorSubject(null);
+    private _notes: BehaviorSubject<Note[] | null> = new BehaviorSubject(null);
 
     /**
      * Constructor
@@ -22,204 +23,216 @@ export class InventoryService
     // @ Accessors
     // -----------------------------------------------------------------------------------------------------
 
-
-
     /**
-     * Getter for pagination
+     * Getter for labels
      */
-    get pagination$(): Observable<InventoryPagination>
+    get labels$(): Observable<Label[]>
     {
-        return this._pagination.asObservable();
+        return this._labels.asObservable();
     }
 
     /**
-     * Getter for product
+     * Getter for notes
      */
-    get product$(): Observable<InventoryProduct>
+    get notes$(): Observable<Note[]>
     {
-        return this._product.asObservable();
+        return this._notes.asObservable();
     }
 
     /**
-     * Getter for products
+     * Getter for note
      */
-    get products$(): Observable<InventoryProduct[]>
+    get note$(): Observable<Note>
     {
-        return this._products.asObservable();
+        return this._note.asObservable();
     }
-
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
 
     /**
-     * Get products
-     *
-     *
-     * @param page
-     * @param size
-     * @param sort
-     * @param order
-     * @param search
+     * Get labels
      */
-    getProducts(page: number = 0, size: number = 10, sort: string = 'name', order: 'asc' | 'desc' | '' = 'asc', search: string = '', category: string = ''):
-        Observable<{ pagination: InventoryPagination; products: InventoryProduct[] }>
+    getLabels(): Observable<Label[]>
     {
-        return this._httpClient.get<{ pagination: InventoryPagination; products: InventoryProduct[] }>('api/apps/ecommerce/inventory/products', {
-            params: {
-                page: '' + page,
-                size: '' + size,
-                sort,
-                order,
-                search,
-            },
-        }).pipe(
-            tap((response) =>
+        return this._httpClient.get<Label[]>('api/apps/notes/labels').pipe(
+            tap((response: Label[]) =>
             {
-                this._pagination.next(response.pagination);
-                this._products.next(response.products);
+                this._labels.next(response);
             }),
         );
     }
 
+    /**
+     * Add label
+     *
+     * @param title
+     */
+    addLabel(title: string): Observable<Label[]>
+    {
+        return this._httpClient.post<Label[]>('api/apps/notes/labels', {title}).pipe(
+            tap((labels) =>
+            {
+                // Update the labels
+                this._labels.next(labels);
+            }),
+        );
+    }
 
     /**
-     * Get product by id
+     * Update label
+     *
+     * @param label
      */
-    getProductById(id: string): Observable<InventoryProduct>
+    updateLabel(label: Label): Observable<Label[]>
     {
-        return this._products.pipe(
-            take(1),
-            map((products) =>
+        return this._httpClient.patch<Label[]>('api/apps/notes/labels', {label}).pipe(
+            tap((labels) =>
             {
-                // Find the product
-                const product = products.find(item => item.id === id) || null;
+                // Update the notes
+                this.getNotes().subscribe();
 
-                // Update the product
-                this._product.next(product);
-
-                // Return the product
-                return product;
+                // Update the labels
+                this._labels.next(labels);
             }),
-            switchMap((product) =>
+        );
+    }
+
+    /**
+     * Delete a label
+     *
+     * @param id
+     */
+    deleteLabel(id: string): Observable<Label[]>
+    {
+        return this._httpClient.delete<Label[]>('api/apps/notes/labels', {params: {id}}).pipe(
+            tap((labels) =>
             {
-                if ( !product )
+                // Update the notes
+                this.getNotes().subscribe();
+
+                // Update the labels
+                this._labels.next(labels);
+            }),
+        );
+    }
+
+    /**
+     * Get notes
+     */
+    getNotes(): Observable<Note[]>
+    {
+        return this._httpClient.get<Note[]>('api/apps/notes/all').pipe(
+            tap((response: Note[]) =>
+            {
+                this._notes.next(response);
+            }),
+        );
+    }
+
+    /**
+     * Get note by id
+     */
+    getNoteById(id: string): Observable<Note>
+    {
+        return this._notes.pipe(
+            take(1),
+            map((notes) =>
+            {
+                // Find within the folders and files
+                const note = notes.find(value => value.id === id) || null;
+
+                // Update the note
+                this._note.next(note);
+
+                // Return the note
+                return note;
+            }),
+            switchMap((note) =>
+            {
+                if ( !note )
                 {
-                    return throwError('Could not found product with id of ' + id + '!');
+                    return throwError('Could not found the note with id of ' + id + '!');
                 }
 
-                return of(product);
+                return of(note);
             }),
         );
     }
 
     /**
-     * Get product by category
+     * Add task to the given note
+     *
+     * @param note
+     * @param task
      */
-    getProductsByCategory(category: string): Observable<InventoryProduct[]> {
-    return this._products.pipe(
-      take(1),
-      map((products) => products.filter(item => item.category === category)),
-      switchMap((filteredProducts) => {
-        if (filteredProducts.length === 0) {
-          return throwError('Could not find products in category ' + category + '!');
-        }
-        return of(filteredProducts);
-      })
-    );
-  }
-
-
-    /**
-     * Create product
-     */
-    createProduct(): Observable<InventoryProduct>
+    addTask(note: Note, task: string): Observable<Note>
     {
-        return this.products$.pipe(
-            take(1),
-            switchMap(products => this._httpClient.post<InventoryProduct>('api/apps/ecommerce/inventory/product', {}).pipe(
-                map((newProduct) =>
-                {
-                    // Update the products with the new product
-                    this._products.next([newProduct, ...products]);
-
-                    // Return the new product
-                    return newProduct;
-                }),
-            )),
-        );
+        return this._httpClient.post<Note>('api/apps/notes/tasks', {
+            note,
+            task,
+        }).pipe(switchMap(() => this.getNotes().pipe(
+            switchMap(() => this.getNoteById(note.id)),
+        )));
     }
 
     /**
-     * Update product
+     * Create note
      *
-     * @param id
-     * @param product
+     * @param note
      */
-    updateProduct(id: string, product: InventoryProduct): Observable<InventoryProduct>
+    createNote(note: Note): Observable<Note>
     {
-        return this.products$.pipe(
-            take(1),
-            switchMap(products => this._httpClient.patch<InventoryProduct>('api/apps/ecommerce/inventory/product', {
-                id,
-                product,
-            }).pipe(
-                map((updatedProduct) =>
-                {
-                    // Find the index of the updated product
-                    const index = products.findIndex(item => item.id === id);
-
-                    // Update the product
-                    products[index] = updatedProduct;
-
-                    // Update the products
-                    this._products.next(products);
-
-                    // Return the updated product
-                    return updatedProduct;
-                }),
-                switchMap(updatedProduct => this.product$.pipe(
-                    take(1),
-                    filter(item => item && item.id === id),
-                    tap(() =>
-                    {
-                        // Update the product if it's selected
-                        this._product.next(updatedProduct);
-
-                        // Return the updated product
-                        return updatedProduct;
-                    }),
+        return this._httpClient.post<Note>('api/apps/notes', {note}).pipe(
+            switchMap(response => this.getNotes().pipe(
+                switchMap(() => this.getNoteById(response.id).pipe(
+                    map(() => response),
                 )),
-            )),
+            )));
+    }
+
+    /**
+     * Update the note
+     *
+     * @param note
+     */
+    updateNote(note: Note): Observable<Note>
+    {
+        // Clone the note to prevent accidental reference based updates
+        const updatedNote = cloneDeep(note) as any;
+
+        // Before sending the note to the server, handle the labels
+        if ( updatedNote.labels.length )
+        {
+            updatedNote.labels = updatedNote.labels.map(label => label.id);
+        }
+
+        return this._httpClient.patch<Note>('api/apps/notes', {updatedNote}).pipe(
+            tap((response) =>
+            {
+                // Update the notes
+                this.getNotes().subscribe();
+            }),
         );
     }
 
     /**
-     * Delete the product
+     * Delete the note
      *
-     * @param id
+     * @param note
      */
-    deleteProduct(id: string): Observable<boolean>
+    deleteNote(note: Note): Observable<boolean>
     {
-        return this.products$.pipe(
-            take(1),
-            switchMap(products => this._httpClient.delete('api/apps/ecommerce/inventory/product', {params: {id}}).pipe(
-                map((isDeleted: boolean) =>
-                {
-                    // Find the index of the deleted product
-                    const index = products.findIndex(item => item.id === id);
+        return this._httpClient.delete<boolean>('api/apps/notes', {params: {id: note.id}}).pipe(
+            map((isDeleted: boolean) =>
+            {
+                // Update the notes
+                this.getNotes().subscribe();
 
-                    // Delete the product
-                    products.splice(index, 1);
-
-                    // Update the products
-                    this._products.next(products);
-
-                    // Return the deleted status
-                    return isDeleted;
-                }),
-            )),
+                // Return the deleted status
+                return isDeleted;
+            }),
         );
     }
 }

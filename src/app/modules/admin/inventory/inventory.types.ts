@@ -1,22 +1,25 @@
-export interface InventoryProduct
+export interface Task
 {
-    id: string;
-    category: string;
-    name: string;
-    ref: number;
-    stock: number;
-    precioDetal: number;
-    precioEmprendedor: number;
-    thumbnail: File;
-    images: File;
+    id?: string;
+    content?: string;
+    completed?: string;
 }
 
-export interface InventoryPagination
+export interface Label
 {
-    length: number;
-    size: number;
-    page: number;
-    lastPage: number;
-    startIndex: number;
-    endIndex: number;
+    id?: string;
+    title?: string;
+}
+
+export interface Note
+{
+    id?: string;
+    title?: string;
+    content?: string;
+    tasks?: Task[];
+    image?: string | null;
+    labels?: Label[];
+    archived?: boolean;
+    createdAt?: string;
+    updatedAt?: string | null;
 }
