@@ -17,7 +17,6 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { EntrepreneurService } from './entrepreneurs.service';
 import { InventoryPagination, InventoryProduct, Entrepreneur } from 'app/modules/admin/entrepreneurs/entrepreneurs.types';
 import { debounceTime, map, merge, Observable, Subject, switchMap, takeUntil } from 'rxjs';
-import { Router } from '@angular/router';
 
 
 @Component({

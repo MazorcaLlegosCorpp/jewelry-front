@@ -76,6 +76,7 @@ export const appRoutes: Route[] = [
             {path: 'profile', loadChildren: () => import('app/modules/admin/profile/profile.routes')},
             {path: 'inventory', loadChildren: () => import('app/modules/admin/inventory/inventory.routes')},
             {path: 'entrepeneurs', loadChildren: () => import('app/modules/admin/entrepreneurs/entrepreneurs.routes')},
+            {path: 'my-orders', loadChildren: () => import('app/modules/admin/my-orders/my-orders.routes')},
         ]
     }
 ];

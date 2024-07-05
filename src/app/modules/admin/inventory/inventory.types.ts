@@ -11,6 +11,12 @@ export interface Label
     title?: string;
 }
 
+export interface Category
+{
+    id: string;
+    name: string;
+}
+
 export interface Note
 {
     id?: string;
@@ -23,3 +29,14 @@ export interface Note
     createdAt?: string;
     updatedAt?: string | null;
 }
+
+export interface Product
+{
+    id?: string;
+    name?: string;
+    price?: number;
+    description?: string;
+    image?: string | null;
+    category?: Category
+}
+

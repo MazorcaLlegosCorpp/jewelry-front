@@ -77,6 +77,7 @@ export class NotesListComponent implements OnInit, OnDestroy
         // Get labels
         this.labels$ = this._notesService.labels$;
 
+        // TODO: query products in this same way
         // Get notes
         this.notes$ = combineLatest([this._notesService.notes$, this.filter$, this.searchQuery$]).pipe(
             distinctUntilChanged(),

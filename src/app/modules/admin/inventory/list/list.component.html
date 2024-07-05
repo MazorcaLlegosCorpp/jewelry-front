@@ -52,7 +52,7 @@
                         </mat-form-field>
                     </div>
                 </div>
-
+                <!-- TODO: list products instead of notes -->
                 <!-- Notes -->
                 <ng-container *ngIf="(notes$ | async) as notes; else loading">
                     <ng-container *ngIf="notes.length; else noNotes">

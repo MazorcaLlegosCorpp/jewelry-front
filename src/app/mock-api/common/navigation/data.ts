@@ -3,133 +3,23 @@ import { FuseNavigationItem } from '@fuse/components/navigation';
 
 export const defaultNavigation: FuseNavigationItem[] = [
     {
-        id      : 'navigation-features',
-        title   : 'Navigation features',
-        subtitle: 'Collapsable levels & badge styles',
-        type    : 'group',
-        icon    : 'heroicons_outline:bars-3',
-        children: [
-            {
-                id   : 'navigation-features.badge-style-simple',
-                title: 'Anillos',
-                icon : 'heroicons_outline:chevron-right',
-                type : 'basic',
-                link    : '/inventory',
-                badge: {
-                    title  : 'New!',
-                    classes: 'text-teal-500',
-                },
-            },
-            {
-                id   : 'navigation-features.badge-style-simple',
-                title: 'Aretes',
-                icon : 'heroicons_outline:chevron-right',
-                type : 'basic',
-                badge: {
-                    title  : 'New!',
-                    classes: 'text-teal-500',
-                },
-            },
-            {
-                id   : 'navigation-features.badge-style-simple',
-                title: 'Cadenas',
-                icon : 'heroicons_outline:chevron-right',
-                type : 'basic',
-                badge: {
-                    title  : 'New!',
-                    classes: 'text-teal-500',
-                },
-            },
-            {
-                id   : 'navigation-features.badge-style-simple',
-                title: 'Cruceros',
-                icon : 'heroicons_outline:chevron-right',
-                type : 'basic',
-                badge: {
-                    title  : 'New!',
-                    classes: 'text-teal-500',
-                },
-            },
-            {
-                id   : 'navigation-features.badge-style-simple',
-                title: 'Dijes',
-                icon : 'heroicons_outline:chevron-right',
-                type : 'basic',
-                badge: {
-                    title  : 'New!',
-                    classes: 'text-teal-500',
-                },
-            },
-            {
-                id   : 'navigation-features.badge-style-simple',
-                title: 'Exclusividades',
-                icon : 'heroicons_outline:chevron-right',
-                type : 'basic',
-                badge: {
-                    title  : 'New!',
-                    classes: 'text-teal-500',
-                },
-            },
-            {
-                id   : 'navigation-features.badge-style-simple',
-                title: 'Herrajes',
-                icon : 'heroicons_outline:chevron-right',
-                type : 'basic',
-                badge: {
-                    title  : 'New!',
-                    classes: 'text-teal-500',
-                },
-            },
-            {
-                id   : 'navigation-features.badge-style-simple',
-                title: 'Pulseras',
-                icon : 'heroicons_outline:chevron-right',
-                type : 'basic',
-                badge: {
-                    title  : 'New!',
-                    classes: 'text-teal-500',
-                },
-            },
-            {
-                id   : 'navigation-features.badge-style-simple',
-                title: 'Rosarios',
-                icon : 'heroicons_outline:chevron-right',
-                type : 'basic',
-                badge: {
-                    title  : 'New!',
-                    classes: 'text-teal-500',
-                },
-            },
-            {
-                id   : 'navigation-features.badge-style-simple',
-                title: 'Tobilleras',
-                icon : 'heroicons_outline:chevron-right',
-                type : 'basic',
-                badge: {
-                    title  : 'New!',
-                    classes: 'text-teal-500',
-                },
-            },
-        ],
-    },
-    {
         id      : 'pedidos-features',
-        title   : 'Pedidos features',
-        subtitle: 'Collapsable levels & badge styles',
+        title   : 'Pedidos',
         type    : 'group',
         icon    : 'heroicons_outline:bars-3',
         children: [
             {
-                id   : 'navigation-features.badge-style-simple',
+                id   : 'pedidos-features.pedido',
                 title: 'Hacer un pedido',
                 icon : 'heroicons_outline:clipboard-document-list',
                 type : 'basic',
             },
             {
-                id   : 'navigation-features.badge-style-simple',
+                id   : 'pedidos-features.mis-pedidos',
                 title: 'Mis pedidos',
                 icon : 'heroicons_outline:clipboard-document-check',
                 type : 'basic',
+                link: '/my-orders'
             },
         ],
     },
