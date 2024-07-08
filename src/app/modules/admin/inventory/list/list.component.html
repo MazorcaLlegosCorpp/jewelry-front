@@ -53,12 +53,13 @@
                     </div>
                 </div>
                 <!-- TODO: list products instead of notes -->
-                <!-- Notes -->
-                <ng-container *ngIf="(notes$ | async) as notes; else loading">
-                    <ng-container *ngIf="notes.length; else noNotes">
+
+                <!-- products -->
+                <ng-container *ngIf="(products$ | async) as products; else loading">
+                    <ng-container *ngIf="products.length; else noNotes">
 
                         <!-- Masonry layout -->
-                        <fuse-masonry class="-mx-2 mt-8" [items]="notes" [columns]="masonryColumns"
+                        <fuse-masonry class="-mx-2 mt-8" [items]="products" [columns]="masonryColumns"
                             [columnsTemplate]="columnsTemplate">
                             <!-- Columns template -->
                             <ng-template #columnsTemplate let-columns>
@@ -66,57 +67,38 @@
                                 <ng-container *ngFor="let column of columns; trackBy: trackByFn">
                                     <!-- Column -->
                                     <div class="flex-1 px-2 space-y-4">
-                                        <ng-container *ngFor="let note of column.items; trackBy: trackByFn">
+                                        <ng-container *ngFor="let product of column.items; trackBy: trackByFn">
                                             <!-- Note -->
                                             <div class="flex flex-col shadow rounded-2xl overflow-hidden cursor-pointer bg-card"
-                                                (click)="openNoteDialog(note)">
+                                                (click)="openProductDialog(product)">
                                                 <!-- Image -->
-                                                <ng-container *ngIf="note.image">
-                                                    <img class="w-full object-cover" [src]="note.image">
+                                                <ng-container *ngIf="product.image">
+                                                    <img class="w-full object-cover" [src]="product.image">
                                                 </ng-container>
                                                 <div class="flex flex-auto flex-col p-6 space-y-4">
                                                     <!-- Title -->
-                                                    <ng-container *ngIf="note.title">
+                                                    <ng-container *ngIf="product.name">
                                                         <div class="font-semibold line-clamp-3">
-                                                            {{note.title}}
+                                                            {{product.name}}
                                                         </div>
                                                     </ng-container>
-                                                    <!-- Content -->
-                                                    <ng-container *ngIf="note.content">
-                                                        <div [class.text-xl]="note.content.length < 70">
-                                                            {{note.content}}
+                                                    <!-- Descripcion -->
+                                                    <ng-container *ngIf="product.description">
+                                                        <div [class.text-xl]="product.description.length < 70">
+                                                            {{product.description}}
                                                         </div>
                                                     </ng-container>
-                                                    <!-- Tasks -->
-                                                    <ng-container *ngIf="note.tasks">
-                                                        <div class="space-y-1.5">
-                                                            <ng-container
-                                                                *ngFor="let task of note.tasks; trackBy: trackByFn">
-                                                                <div class="flex items-center">
-                                                                    <ng-container *ngIf="!task.completed">
-                                                                        <div
-                                                                            class="flex items-center justify-center w-5 h-5">
-                                                                            <div class="w-4 h-4 rounded-full border-2">
-                                                                            </div>
-                                                                        </div>
-                                                                    </ng-container>
-                                                                    <ng-container *ngIf="task.completed">
-                                                                        <mat-icon class="text-hint icon-size-5"
-                                                                            [svgIcon]="'heroicons_solid:check-circle'"></mat-icon>
-                                                                    </ng-container>
-                                                                    <div class="ml-1.5 leading-5"
-                                                                        [ngClass]="{'text-secondary line-through': task.completed}">
-                                                                        {{task.content}}
-                                                                    </div>
-                                                                </div>
-                                                            </ng-container>
+                                                    <!-- Precio -->
+                                                    <ng-container *ngIf="product.precioFinal">
+                                                        <div class="font-semibold line-clamp-3">
+                                                            {{ product.precioDetal}}
                                                         </div>
                                                     </ng-container>
                                                     <!-- Labels -->
-                                                    <ng-container *ngIf="note.labels">
+                                                    <ng-container *ngIf="product.labels">
                                                         <div class="flex flex-wrap items-center -m-1">
                                                             <ng-container
-                                                                *ngFor="let label of note.labels; trackBy: trackByFn">
+                                                                *ngFor="let label of product.labels; trackBy: trackByFn">
                                                                 <div
                                                                     class="m-1 py-0.5 px-3 rounded-full text-sm font-medium text-gray-500 bg-gray-100 dark:text-gray-300 dark:bg-gray-700">
                                                                     {{label.title}}

@@ -22,8 +22,6 @@
                     </button>
                     <mat-menu #actionsMenu="matMenu">
                         <button mat-menu-item>Export</button>
-                        <button mat-menu-item>Reports</button>
-                        <button mat-menu-item>Settings</button>
                     </mat-menu>
                 </div>
             </div>
@@ -108,6 +106,18 @@
                                     [ngClass]="{'bg-red-200 text-red-800 dark:bg-red-600 dark:text-red-50': pedido.status === 'pending',
                                                 'bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50': pedido.status === 'finalizado'}">
                                     <span class="leading-relaxed whitespace-nowrap">{{pedido.status}}</span>
+                                </span>
+                            </td>
+                        </ng-container>
+
+                        <!-- detalles -->
+                        <ng-container matColumnDef="detalles">
+                            <th mat-header-cell mat-sort-header *matHeaderCellDef>
+                                Detalles
+                            </th>
+                            <td mat-cell *matCellDef="let pedido">
+                                <span class="pr-6 font-medium whitespace-nowrap">
+                                    {{pedido.detalles}}
                                 </span>
                             </td>
                         </ng-container>

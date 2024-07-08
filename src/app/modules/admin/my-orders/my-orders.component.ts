@@ -9,7 +9,8 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MyOrdersService } from 'app/modules/admin/my-orders/my-orders.service';
 import { ApexOptions, NgApexchartsModule } from 'ng-apexcharts';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil, BehaviorSubject } from 'rxjs';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
     selector: 'my-orders',
@@ -17,22 +18,44 @@ import { Subject, takeUntil } from 'rxjs';
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [MatButtonModule, MatIconModule, MatMenuModule, MatDividerModule, NgApexchartsModule, MatTableModule, MatSortModule, NgClass, MatProgressBarModule, CurrencyPipe, DatePipe],
+    imports: [
+        MatButtonModule,
+        MatIconModule,
+        MatMenuModule,
+        MatDividerModule,
+        NgApexchartsModule,
+        MatTableModule,
+        MatSortModule,
+        NgClass,
+        MatFormFieldModule,
+        MatProgressBarModule,
+        CurrencyPipe,
+        DatePipe,
+    ],
 })
 export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('pedidosTable', { read: MatSort }) pedidosTableMatSort: MatSort;
 
     data: any;
+    drawerMode: 'over' | 'side' = 'side';
     accountBalanceOptions: ApexOptions;
     pedidosDataSource: MatTableDataSource<any> = new MatTableDataSource();
-    pedidosTableColumns: string[] = ['status', 'tipo_pago', 'date', 'hour', 'subtotal', 'total'];
+    searchQuery$: BehaviorSubject<string> = new BehaviorSubject(null);
+    pedidosTableColumns: string[] = [
+        'status',
+        'tipo_pago',
+        'date',
+        'hour',
+        'subtotal',
+        'total',
+        'detalles',
+    ];
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     /**
      * Constructor
      */
-    constructor(private _financeService: MyOrdersService) {
-    }
+    constructor(private _financeService: MyOrdersService) {}
 
     // -----------------------------------------------------------------------------------------------------
     // @ Lifecycle hooks
@@ -86,6 +109,15 @@ export class MyOrdersComponent implements OnInit, AfterViewInit, OnDestroy {
      */
     trackByFn(index: number, item: any): any {
         return item.id || index;
+    }
+
+    /**
+     * Filter by query
+     *
+     * @param query
+     */
+    filterByQuery(query: string): void {
+        this.searchQuery$.next(query);
     }
 
     // -----------------------------------------------------------------------------------------------------

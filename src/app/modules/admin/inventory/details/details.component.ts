@@ -1,30 +1,70 @@
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { AsyncPipe, NgClass, NgFor, NgIf } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    Inject,
+    OnDestroy,
+    OnInit,
+    ViewEncapsulation,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRippleModule } from '@angular/material/core';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import {
+    MAT_DIALOG_DATA,
+    MatDialogModule,
+    MatDialogRef,
+} from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { NotesService } from 'app/modules/admin/inventory/inventory.service';
-import { Label, Note, Task } from 'app/modules/admin/inventory/inventory.types';
-import { debounceTime, map, Observable, of, Subject, switchMap, takeUntil } from 'rxjs';
+import { products } from '../../../../mock-api/apps/notes/data';
+import {
+    Label,
+    Note,
+    Task,
+    Product,
+} from 'app/modules/admin/inventory/inventory.types';
+import {
+    debounceTime,
+    map,
+    Observable,
+    of,
+    Subject,
+    switchMap,
+    takeUntil,
+} from 'rxjs';
 
 @Component({
-    selector       : 'notes-details',
-    templateUrl    : './details.component.html',
-    encapsulation  : ViewEncapsulation.None,
+    selector: 'notes-details',
+    templateUrl: './details.component.html',
+    encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone     : true,
-    imports        : [NgIf, MatButtonModule, MatIconModule, FormsModule, TextFieldModule, NgFor, MatCheckboxModule, NgClass, MatRippleModule, MatMenuModule, MatDialogModule, AsyncPipe],
+    standalone: true,
+    imports: [
+        NgIf,
+        MatButtonModule,
+        MatIconModule,
+        FormsModule,
+        TextFieldModule,
+        NgFor,
+        MatCheckboxModule,
+        NgClass,
+        MatRippleModule,
+        MatMenuModule,
+        MatDialogModule,
+        AsyncPipe,
+    ],
 })
-export class NotesDetailsComponent implements OnInit, OnDestroy
-{
+export class NotesDetailsComponent implements OnInit, OnDestroy {
+    product$: Observable<Product>;
     note$: Observable<Note>;
     labels$: Observable<Label[]>;
 
+    productChanged: Subject<Product> = new Subject<Product>();
     noteChanged: Subject<Note> = new Subject<Note>();
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -32,13 +72,10 @@ export class NotesDetailsComponent implements OnInit, OnDestroy
      * Constructor
      */
     constructor(
-        private _changeDetectorRef: ChangeDetectorRef,
-        @Inject(MAT_DIALOG_DATA) private _data: { note: Note },
+        @Inject(MAT_DIALOG_DATA) private _dataProducts: { product: Product },
         private _notesService: NotesService,
-        private _matDialogRef: MatDialogRef<NotesDetailsComponent>,
-    )
-    {
-    }
+        private _matDialogRef: MatDialogRef<NotesDetailsComponent>
+    ) {}
 
     // -----------------------------------------------------------------------------------------------------
     // @ Lifecycle hooks
@@ -47,58 +84,26 @@ export class NotesDetailsComponent implements OnInit, OnDestroy
     /**
      * On init
      */
-    ngOnInit(): void
-    {
+    ngOnInit(): void {
         // Edit
-        if ( this._data.note.id )
-        {
+        if (this._dataProducts.product.id) {
             // Request the data from the server
-            this._notesService.getNoteById(this._data.note.id).subscribe();
+            this._notesService
+                .getProductById(this._dataProducts.product.id)
+                .subscribe();
 
             // Get the note
-            this.note$ = this._notesService.note$;
-        }
-        // Add
-        else
-        {
-            // Create an empty note
-            const note = {
-                id       : null,
-                title    : '',
-                content  : '',
-                tasks    : null,
-                image    : null,
-                reminder : null,
-                labels   : [],
-                archived : false,
-                createdAt: null,
-                updatedAt: null,
-            };
-
-            this.note$ = of(note);
+            this.product$ = this._notesService.product$;
         }
 
         // Get the labels
         this.labels$ = this._notesService.labels$;
-
-        // Subscribe to note updates
-        this.noteChanged
-            .pipe(
-                takeUntil(this._unsubscribeAll),
-                debounceTime(500),
-                switchMap(note => this._notesService.updateNote(note)))
-            .subscribe(() =>
-            {
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
     }
 
     /**
      * On destroy
      */
-    ngOnDestroy(): void
-    {
+    ngOnDestroy(): void {
         // Unsubscribe from all subscriptions
         this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
@@ -113,14 +118,16 @@ export class NotesDetailsComponent implements OnInit, OnDestroy
      *
      * @param note
      */
-    createNote(note: Note): void
-    {
-        this._notesService.createNote(note).pipe(
-            map(() =>
-            {
-                // Get the note
-                this.note$ = this._notesService.note$;
-            })).subscribe();
+    createNote(note: Note): void {
+        this._notesService
+            .createNote(note)
+            .pipe(
+                map(() => {
+                    // Get the note
+                    this.note$ = this._notesService.note$;
+                })
+            )
+            .subscribe();
     }
 
     /**
@@ -129,11 +136,9 @@ export class NotesDetailsComponent implements OnInit, OnDestroy
      * @param note
      * @param fileList
      */
-    uploadImage(note: Note, fileList: FileList): void
-    {
+    uploadImage(note: Note, fileList: FileList): void {
         // Return if canceled
-        if ( !fileList.length )
-        {
+        if (!fileList.length) {
             return;
         }
 
@@ -141,13 +146,11 @@ export class NotesDetailsComponent implements OnInit, OnDestroy
         const file = fileList[0];
 
         // Return if the file is not allowed
-        if ( !allowedTypes.includes(file.type) )
-        {
+        if (!allowedTypes.includes(file.type)) {
             return;
         }
 
-        this._readAsDataURL(file).then((data) =>
-        {
+        this._readAsDataURL(file).then((data) => {
             // Update the image
             note.image = data;
 
@@ -157,41 +160,13 @@ export class NotesDetailsComponent implements OnInit, OnDestroy
     }
 
     /**
-     * Remove the image on the given note
-     *
-     * @param note
-     */
-    removeImage(note: Note): void
-    {
-        note.image = null;
-
-        // Update the note
-        this.noteChanged.next(note);
-    }
-
-    /**
-     * Add an empty tasks array to note
-     *
-     * @param note
-     */
-    addTasksToNote(note): void
-    {
-        if ( !note.tasks )
-        {
-            note.tasks = [];
-        }
-    }
-
-    /**
      * Add task to the given note
      *
      * @param note
      * @param task
      */
-    addTaskToNote(note: Note, task: string): void
-    {
-        if ( task.trim() === '' )
-        {
+    addTaskToNote(note: Note, task: string): void {
+        if (task.trim() === '') {
             return;
         }
 
@@ -205,10 +180,9 @@ export class NotesDetailsComponent implements OnInit, OnDestroy
      * @param note
      * @param task
      */
-    removeTaskFromNote(note: Note, task: Task): void
-    {
+    removeTaskFromNote(note: Note, task: Task): void {
         // Remove the task
-        note.tasks = note.tasks.filter(item => item.id !== task.id);
+        note.tasks = note.tasks.filter((item) => item.id !== task.id);
 
         // Update the note
         this.noteChanged.next(note);
@@ -220,14 +194,22 @@ export class NotesDetailsComponent implements OnInit, OnDestroy
      * @param note
      * @param task
      */
-    updateTaskOnNote(note: Note, task: Task): void
-    {
+    updateTaskOnNote(note: Note, task: Task): void {
         // If the task is already available on the item
-        if ( task.id )
-        {
+        if (task.id) {
             // Update the note
             this.noteChanged.next(note);
         }
+    }
+
+    /**
+     * Is the given product has the given label
+     *
+     * @param product
+     * @param label
+     */
+    isProductHasLabel(product: Product, label: Label): boolean {
+        return !!product.labels.find((item) => item.id === label.id);
     }
 
     /**
@@ -236,9 +218,30 @@ export class NotesDetailsComponent implements OnInit, OnDestroy
      * @param note
      * @param label
      */
-    isNoteHasLabel(note: Note, label: Label): boolean
-    {
-        return !!note.labels.find(item => item.id === label.id);
+    isNoteHasLabel(note: Note, label: Label): boolean {
+        return !!note.labels.find((item) => item.id === label.id);
+    }
+
+    /**
+     * Toggle the given label on the given product
+     *
+     * @param note
+     * @param label
+     */
+    toggleLabelOnProduct(product: Product, label: Label): void {
+        // If the product already has the label
+        if (this.isNoteHasLabel(product, label)) {
+            product.labels = product.labels.filter(
+                (item) => item.id !== label.id
+            );
+        }
+        // Otherwise
+        else {
+            product.labels.push(label);
+        }
+
+        // Update the product
+        this.productChanged.next(product);
     }
 
     /**
@@ -247,16 +250,13 @@ export class NotesDetailsComponent implements OnInit, OnDestroy
      * @param note
      * @param label
      */
-    toggleLabelOnNote(note: Note, label: Label): void
-    {
+    toggleLabelOnNote(note: Note, label: Label): void {
         // If the note already has the label
-        if ( this.isNoteHasLabel(note, label) )
-        {
-            note.labels = note.labels.filter(item => item.id !== label.id);
+        if (this.isNoteHasLabel(note, label)) {
+            note.labels = note.labels.filter((item) => item.id !== label.id);
         }
         // Otherwise
-        else
-        {
+        else {
             note.labels.push(label);
         }
 
@@ -269,8 +269,7 @@ export class NotesDetailsComponent implements OnInit, OnDestroy
      *
      * @param note
      */
-    toggleArchiveOnNote(note: Note): void
-    {
+    toggleArchiveOnNote(note: Note): void {
         note.archived = !note.archived;
 
         // Update the note
@@ -285,9 +284,8 @@ export class NotesDetailsComponent implements OnInit, OnDestroy
      *
      * @param note
      */
-    updateNoteDetails(note: Note): void
-    {
-        this.noteChanged.next(note);
+    updateProductDetails(product: Product): void {
+        this.noteChanged.next(product);
     }
 
     /**
@@ -295,20 +293,16 @@ export class NotesDetailsComponent implements OnInit, OnDestroy
      *
      * @param note
      */
-    deleteNote(note: Note): void
-    {
-        this._notesService.deleteNote(note)
-            .subscribe((isDeleted) =>
-            {
-                // Return if the note wasn't deleted...
-                if ( !isDeleted )
-                {
-                    return;
-                }
+    deleteNote(note: Note): void {
+        this._notesService.deleteNote(note).subscribe((isDeleted) => {
+            // Return if the note wasn't deleted...
+            if (!isDeleted) {
+                return;
+            }
 
-                // Close the dialog
-                this._matDialogRef.close();
-            });
+            // Close the dialog
+            this._matDialogRef.close();
+        });
     }
 
     /**
@@ -317,8 +311,7 @@ export class NotesDetailsComponent implements OnInit, OnDestroy
      * @param index
      * @param item
      */
-    trackByFn(index: number, item: any): any
-    {
+    trackByFn(index: number, item: any): any {
         return item.id || index;
     }
 
@@ -331,23 +324,19 @@ export class NotesDetailsComponent implements OnInit, OnDestroy
      *
      * @param file
      */
-    private _readAsDataURL(file: File): Promise<any>
-    {
+    private _readAsDataURL(file: File): Promise<any> {
         // Return a new promise
-        return new Promise((resolve, reject) =>
-        {
+        return new Promise((resolve, reject) => {
             // Create a new reader
             const reader = new FileReader();
 
             // Resolve the promise on success
-            reader.onload = (): void =>
-            {
+            reader.onload = (): void => {
                 resolve(reader.result);
             };
 
             // Reject the promise on error
-            reader.onerror = (e): void =>
-            {
+            reader.onerror = (e): void => {
                 reject(e);
             };
 

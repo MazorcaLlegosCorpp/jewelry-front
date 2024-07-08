@@ -1,24 +1,20 @@
-export interface Task
-{
+export interface Task {
     id?: string;
     content?: string;
     completed?: string;
 }
 
-export interface Label
-{
+export interface Label {
     id?: string;
     title?: string;
 }
 
-export interface Category
-{
+export interface Category {
     id: string;
     name: string;
 }
 
-export interface Note
-{
+export interface Note {
     id?: string;
     title?: string;
     content?: string;
@@ -30,13 +26,13 @@ export interface Note
     updatedAt?: string | null;
 }
 
-export interface Product
-{
+export interface Product {
     id?: string;
     name?: string;
-    price?: number;
+    precioEmprendedor?: number;
+    precioDetal?: number;
     description?: string;
     image?: string | null;
-    category?: Category
+    labels?: Label[];
+    category?: Category;
 }
-
