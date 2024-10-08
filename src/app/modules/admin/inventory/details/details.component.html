@@ -1,0 +1,76 @@
+<div class="flex flex-col flex-auto md:w-160 md:min-w-160 -m-6">
+    <ng-container *ngIf="(product$ | async) as product">
+        <!-- Image -->
+        <ng-container *ngIf="product.image">
+            <div class="relative w-full">
+                <img class="w-full object-cover" [src]="product.image">
+            </div>
+        </ng-container>
+        <div class="m-4">
+            <!-- Title -->
+            <div>
+                <input class="w-full py-2 text-2xl" [placeholder]="'Nombre'" [(ngModel)]="product.name" readonly />
+            </div>
+            <div class="flex w-full justify-between py-1 px-2"><!-- Precio emprendedor-->
+                <div class="flex w-full py-1 px-2">
+                    Precio Emprendedor:
+                    <input type="text" class="w-full" placeholder="Precio para el publico"
+                        [(ngModel)]="product.precioEmprendedor" readonly />
+                </div>
+                <!-- Precio Final-->
+                <div class="flex w-full py-1 px-2">
+                    Precio Detal:
+                    <input type="text" class="w-full" placeholder="Precio para emprendedores"
+                        [(ngModel)]="product.precioDetal" readonly />
+                </div>
+            </div>
+
+            <!-- Labels -->
+            <ng-container *ngIf="product.labels && product.labels.length">
+                <div class="flex flex-wrap items-center mx-1 mt-6 justify-between w-full">
+                    <ng-container *ngFor="let label of product.labels; trackBy: trackByFn">
+                        <div
+                            class="flex items-center m-1 py-0.5 px-3 rounded-full text-sm font-medium text-gray-500 bg-gray-100 dark:text-gray-300 dark:bg-gray-700">
+                            <div>
+                                {{label.title}}
+                            </div>
+                            <mat-icon class="ml-1 icon-size-4 cursor-pointer" [svgIcon]="'heroicons_solid:x-circle'"
+                                (click)="toggleLabelOnProduct(product, label)"></mat-icon>
+
+                        </div>
+                    </ng-container>
+                    <!-- Close -->
+                    <button mat-flat-button matDialogClose>
+                        Close
+                    </button>
+                </div>
+            </ng-container>
+            <!-- Add Actions -->
+            <ng-container *ngIf="!product.id">
+                <div class="flex items-center justify-end mt-4">
+                    <!-- Save -->
+                    <button mat-flat-button [color]="'primary'" [disabled]="!product.name && !product.description"
+                        (click)="createNote(product)">
+                        Save
+                    </button>
+                </div>
+            </ng-container>
+            <!-- Edit Actions -->
+            <ng-container *ngIf="product.id">
+                <div class="flex items-center justify-between mt-4">
+                    <div class="flex items-center space-x-2">
+                        <mat-menu #labelsMenu="matMenu">
+                            <ng-container *ngIf="(labels$ | async) as labels">
+                                <ng-container *ngFor="let label of labels">
+                                    <button mat-menu-item (click)="toggleLabelOnProduct(product, label)">
+
+                                    </button>
+                                </ng-container>
+                            </ng-container>
+                        </mat-menu>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </ng-container>
+</div>
