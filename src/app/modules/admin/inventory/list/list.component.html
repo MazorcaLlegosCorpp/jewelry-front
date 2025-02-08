@@ -1,0 +1,142 @@
+<div class="absolute inset-0 flex flex-col min-w-0 overflow-hidden">
+
+    <mat-drawer-container class="flex-auto h-full bg-card dark:bg-transparent">
+
+        <!-- Drawer -->
+        <mat-drawer class="w-2/3 sm:w-72 lg:w-56 border-r-0 bg-default" [mode]="drawerMode" [opened]="drawerOpened"
+            #drawer>
+            <div class="p-6 lg:py-8 lg:pl-4 lg:pr-0">
+                <!-- Filters -->
+                <div class="space-y-2">
+                    <!-- Notes -->
+                    <div class="relative flex items-center py-2 px-4 font-medium rounded-full cursor-pointer" [ngClass]="{'bg-gray-200 dark:bg-gray-700 text-primary dark:text-primary-400': filterStatus === 'notes',
+                                'text-hint hover:bg-hover': filterStatus !== 'notes'}" (click)="resetFilter()"
+                        matRipple [matRippleDisabled]="filterStatus === 'notes'">
+                        <mat-icon class="text-current" [svgIcon]="'heroicons_outline:chevron-right'"></mat-icon>
+                        <div class="ml-3 leading-5 select-none text-default">Todos los productos</div>
+                    </div>
+                    <!-- Labels -->
+                    <ng-container *ngIf="(labels$ | async) as labels">
+                        <ng-container *ngFor="let label of labels; trackBy: trackByFn">
+                            <div class="relative flex items-center py-2 px-4 font-medium rounded-full cursor-pointer"
+                                [ngClass]="{'bg-gray-200 dark:bg-gray-700 text-primary dark:text-primary-400': 'label:' + label.id === filterStatus,
+                                    'text-hint hover:bg-hover': 'label:' + label.id !== filterStatus}"
+                                (click)="filterByLabel(label.id)" matRipple
+                                [matRippleDisabled]="'label:' + label.id === filterStatus">
+                                <mat-icon class="text-current" [svgIcon]="'heroicons_outline:chevron-right'"></mat-icon>
+                                <div class="ml-3 leading-5 select-none text-default">{{label.title}}</div>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                </div>
+            </div>
+        </mat-drawer>
+
+        <mat-drawer-content class="flex flex-col bg-gray-100 dark:bg-transparent">
+
+            <!-- Main -->
+            <div class="flex flex-col flex-auto p-6 md:p-8">
+
+                <!-- Header -->
+                <div class="flex items-center">
+                    <div class="flex items-center flex-auto">
+                        <button class="flex lg:hidden -ml-2" mat-icon-button (click)="drawer.toggle()">
+                            <mat-icon [svgIcon]="'heroicons_outline:bars-3'"></mat-icon>
+                        </button>
+                        <mat-form-field class="fuse-mat-rounded fuse-mat-dense flex-auto ml-4 lg:ml-0"
+                            [subscriptSizing]="'dynamic'">
+                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:magnifying-glass'"
+                                matPrefix></mat-icon>
+                            <input matInput [autocomplete]="'off'" [placeholder]="'¿Qué buscas hoy?'"
+                                (input)="filterByQuery(searchInput.value)" #searchInput>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <!-- TODO: list products instead of notes -->
+
+                <!-- products -->
+                <ng-container *ngIf="(products$ | async) as products; else loading">
+                    <ng-container *ngIf="products.length; else noNotes">
+
+                        <!-- Masonry layout -->
+                        <fuse-masonry class="-mx-2 mt-8" [items]="products" [columns]="masonryColumns"
+                            [columnsTemplate]="columnsTemplate">
+                            <!-- Columns template -->
+                            <ng-template #columnsTemplate let-columns>
+                                <!-- Columns -->
+                                <ng-container *ngFor="let column of columns; trackBy: trackByFn">
+                                    <!-- Column -->
+                                    <div class="flex-1 px-2 space-y-4">
+                                        <ng-container *ngFor="let product of column.items; trackBy: trackByFn">
+                                            <!-- Note -->
+                                            <div class="flex flex-col shadow rounded-2xl overflow-hidden cursor-pointer bg-card"
+                                                (click)="openProductDialog(product)">
+                                                <!-- Image -->
+                                                <ng-container *ngIf="product.image">
+                                                    <img class="w-full object-cover" [src]="product.image">
+                                                </ng-container>
+                                                <div class="flex flex-auto flex-col p-6 space-y-4">
+                                                    <!-- Title -->
+                                                    <ng-container *ngIf="product.name">
+                                                        <div class="font-semibold line-clamp-3">
+                                                            {{product.name}}
+                                                        </div>
+                                                    </ng-container>
+                                                    <!-- Descripcion -->
+                                                    <ng-container *ngIf="product.description">
+                                                        <div [class.text-xl]="product.description.length < 70">
+                                                            {{product.description}}
+                                                        </div>
+                                                    </ng-container>
+                                                    <!-- Precio -->
+                                                    <ng-container *ngIf="product.precioFinal">
+                                                        <div class="font-semibold line-clamp-3">
+                                                            {{ product.precioDetal}}
+                                                        </div>
+                                                    </ng-container>
+                                                    <!-- Labels -->
+                                                    <ng-container *ngIf="product.labels">
+                                                        <div class="flex flex-wrap items-center -m-1">
+                                                            <ng-container
+                                                                *ngFor="let label of product.labels; trackBy: trackByFn">
+                                                                <div
+                                                                    class="m-1 py-0.5 px-3 rounded-full text-sm font-medium text-gray-500 bg-gray-100 dark:text-gray-300 dark:bg-gray-700">
+                                                                    {{label.title}}
+                                                                </div>
+                                                            </ng-container>
+                                                        </div>
+                                                    </ng-container>
+                                                </div>
+                                            </div>
+                                        </ng-container>
+                                    </div>
+                                </ng-container>
+                            </ng-template>
+                        </fuse-masonry>
+
+                    </ng-container>
+                </ng-container>
+
+                <!-- Loading template -->
+                <ng-template #loading>
+                    <div class="flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
+                        <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">Loading...</div>
+                    </div>
+                </ng-template>
+
+                <!-- No notes template -->
+                <ng-template #noNotes>
+                    <div class="flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
+                        <mat-icon class="icon-size-24" [svgIcon]="'heroicons_outline:archive-box-x-mark'"></mat-icon>
+                        <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">No hemos encontrado
+                            productos <br> que coincidan con tu busqueda :(</div>
+                    </div>
+                </ng-template>
+
+            </div>
+
+        </mat-drawer-content>
+
+    </mat-drawer-container>
+
+</div>

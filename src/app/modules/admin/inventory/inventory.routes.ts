@@ -1,19 +1,15 @@
-import { inject } from '@angular/core';
 import { Routes } from '@angular/router';
-import { InventoryService } from 'app/modules/admin/inventory/inventory.service';
-import { InventoryComponent } from 'app/modules/admin/inventory/inventory.component';
+import { NotesListComponent } from 'app/modules/admin/inventory/list/list.component';
+import { NotesComponent } from 'app/modules/admin/inventory/inventory.component';
 
 export default [
     {
         path     : '',
-        component: InventoryComponent,
+        component: NotesComponent,
         children : [
             {
                 path     : '',
-                component: InventoryComponent,
-                resolve  : {
-                    products  : () => inject(InventoryService).getProducts(),
-                },
+                component: NotesListComponent,
             },
         ],
     },
